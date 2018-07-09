@@ -1,10 +1,18 @@
 import tkinter
 from conf import setting
+from core import autorun
 
 root = tkinter.Tk()
 root.title('AutoRun')
 root.geometry(setting.Size)
+
+search = tkinter.Entry(root, width=200, font=('', '16', ''), borderwidth=2)
+search.place(relx=0.01, rely=0.01, relwidth=0.6)
+
 root.mainloop()
+
+
+
 
 
 # if __name__ == '__main__':
