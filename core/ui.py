@@ -1,13 +1,42 @@
 import tkinter
+import os
 from conf import setting
 from core import autorun
 
 root = tkinter.Tk()
 root.title('AutoRun')
-root.geometry(setting.Size)
+root.geometry('1200x700')
 
 search = tkinter.Entry(root, width=200, font=('', '16', ''), borderwidth=2)
-search.place(relx=0.01, rely=0.01, relwidth=0.6)
+search.place(relx=0.01, rely=0.015, relwidth=0.6)
+
+
+def list_dir(dir):
+    pass
+
+
+def search_action():
+    dir = search.get()
+    if os.path.isdir(dir):
+        label_var.set('')
+        list_dir(dir)
+    else:
+        label_var.set('directory does not exist')
+
+
+frame_left = tkinter.Frame(root, width=450, height=550, bd=3, bg='white', relief=tkinter.GROOVE)
+frame_left.place(relx=0.01, rely=0.08)
+
+scale_left = tkinter.Scrollbar(frame_left, orient=tkinter.HORIZONTAL)
+scale_left.place(relwidth=1, rely=0.97)
+scale_left.set(0, 0.5)
+
+label_var = tkinter.StringVar()
+label = tkinter.Label(root, textvariable=label_var, width=25, font=('', 14, ''), fg='red')
+label.place(relx=0.75, rely=0.015)
+
+search_button = tkinter.Button(root, text='search', borderwidth=3, width=10, command=search_action)
+search_button.place(relx=0.65, rely=0.01)
 
 root.mainloop()
 
