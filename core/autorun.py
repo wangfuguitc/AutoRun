@@ -3,15 +3,21 @@ import subprocess
 
 
 def run_case(case_list, report_dir):
-    result_list = []
+    success = 0
+    fail = 0
     for case in case_list:
         cmd = 'python ' + '"' + case + '"' + ' >> ' + '"' + \
               os.path.join(report_dir, os.path.basename(case).replace('py', 'txt')) + '"'
         sub = subprocess.Popen(cmd, shell=True)
         sub.wait()
-        result_list.append(sub.returncode)
-    return result_list
+        if sub.returncode:
+            fail += 1
+            html_report(case, success, fail, 'success')
+        else:
+            success += 1
+            html_report(case, success, fail, 'fail')
 
 
-def html_report(case_list, result_list, report_dir):
+
+def html_report(case, success, fail, state):
     pass

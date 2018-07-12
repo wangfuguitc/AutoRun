@@ -11,15 +11,21 @@ search = tkinter.Entry(root, width=200, font=('', '16', ''), borderwidth=2)
 search.place(relx=0.01, rely=0.015, relwidth=0.6)
 
 
-def list_dir(dir):
-    pass
+def search_dir(dir):
+    file_list = []
+    for maindir, subdir, file_name_list in os.walk(dir):
+        file_list.append({maindir: file_name_list})
+    return file_list
 
 
 def search_action():
     dir = search.get()
     if os.path.isdir(dir):
         label_var.set('')
-        list_dir(dir)
+        dir_list = search_dir(dir)
+        for file_list in dir_list:
+            dir_name, file_name_list = file_list.popitem()
+            canvas_left.create_window(220, 20, window=tkinter.Checkbutton(canvas_left, text=dir_name))
     else:
         label_var.set('directory does not exist')
 
@@ -27,9 +33,20 @@ def search_action():
 frame_left = tkinter.Frame(root, width=450, height=550, bd=3, bg='white', relief=tkinter.GROOVE)
 frame_left.place(relx=0.01, rely=0.08)
 
-scale_left = tkinter.Scrollbar(frame_left, orient=tkinter.HORIZONTAL)
-scale_left.place(relwidth=1, rely=0.97)
-scale_left.set(0, 0.5)
+canvas_left = tkinter.Canvas(frame_left, bg='white', width=450, height=550, scrollregion=(0, 0, 2000, 2000))
+
+hbar_left = tkinter.Scrollbar(frame_left, orient=tkinter.HORIZONTAL)
+hbar_left.pack(side=tkinter.BOTTOM, fill=tkinter.X)
+hbar_left.set(0, 0.5)
+hbar_left.config(command=canvas_left.xview)
+
+vbar_left = tkinter.Scrollbar(frame_left, orient=tkinter.VERTICAL)
+vbar_left.pack(side=tkinter.RIGHT, fill=tkinter.Y)
+vbar_left.set(0, 0.5)
+vbar_left.config(command=canvas_left.yview)
+
+canvas_left.config(xscrollcommand=hbar_left.set, yscrollcommand=vbar_left.set)
+canvas_left.pack()
 
 label_var = tkinter.StringVar()
 label = tkinter.Label(root, textvariable=label_var, width=25, font=('', 14, ''), fg='red')
