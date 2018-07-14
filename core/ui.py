@@ -3,29 +3,49 @@ import os
 from conf import setting
 from core import autorun
 
+Checkbutton_Y = 0
+Checkbutton_X = 0
+
 root = tkinter.Tk()
 root.title('AutoRun')
 root.geometry('1200x700')
 
-search = tkinter.Entry(root, width=200, font=('', '16', ''), borderwidth=2)
+search = tkinter.Entry(root, width=250, font=('', '16', ''), borderwidth=2)
 search.place(relx=0.01, rely=0.015, relwidth=0.6)
 
 
+def make_button(dir_list, main_dir, main_list, checkbutton_x):
+    global Checkbutton_Y
+    Checkbutton_Y += 1
+    canvas_left.create_window(250+20*checkbutton_x, 20*Checkbutton_Y, window=tkinter.Checkbutton(canvas_left, text=main_dir, anchor='w', width=60))
+    checkbutton_x += 1
+    for file in dir_list[0]:
+        Checkbutton_Y += 1
+        canvas_left.create_window(250+20*checkbutton_x, 20*Checkbutton_Y, window=tkinter.Checkbutton(canvas_left, text=file, anchor='w', width=60))
+    for re_dir in dir_list[1]:
+        ab_dir = os.path.join(main_dir, re_dir)
+        make_button(main_list[ab_dir], ab_dir, main_list, checkbutton_x)
+
+
 def search_dir(dir):
-    file_list = []
+    dir_list = {}
     for maindir, subdir, file_name_list in os.walk(dir):
-        file_list.append({maindir: file_name_list})
-    return file_list
+        remove_list = []
+        for file in file_name_list:
+            if not file.endswith('.py'):
+                remove_list.append(file)
+        for remove_name in remove_list:
+            file_name_list.remove(remove_name)
+        dir_list[maindir] = [file_name_list, subdir]
+    return dir_list
 
 
 def search_action():
-    dir = search.get()
-    if os.path.isdir(dir):
+    main_dir = search.get()
+    if os.path.isdir(main_dir):
         label_var.set('')
-        dir_list = search_dir(dir)
-        for file_list in dir_list:
-            dir_name, file_name_list = file_list.popitem()
-            canvas_left.create_window(220, 20, window=tkinter.Checkbutton(canvas_left, text=dir_name))
+        dir_list = search_dir(main_dir)
+        make_button(dir_list[main_dir], main_dir, dir_list, 0)
     else:
         label_var.set('directory does not exist')
 
