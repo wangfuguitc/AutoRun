@@ -4,7 +4,9 @@ from conf import setting
 from core import autorun
 
 Checkbutton_Y = 0
-Checkbutton_X = 0
+Var_list = []
+Cb_dict = {}
+File_list = []
 
 root = tkinter.Tk()
 root.title('AutoRun')
@@ -14,28 +16,52 @@ search = tkinter.Entry(root, width=250, font=('', '16', ''), borderwidth=2)
 search.place(relx=0.01, rely=0.015, relwidth=0.6)
 
 
-def make_button(dir_list, main_dir, main_list, checkbutton_x):
+def chb_action(button_list, chb_state):
+    if chb_state.get():
+        for botton in button_list:
+            botton.deselect()
+            botton.invoke()
+    else:
+        for botton in button_list:
+            botton.select()
+            botton.invoke()
+
+
+def make_button(dir_list, main_dir, main_list, checkbutton_x, *args):
     global Checkbutton_Y
+    global Var_list
+    global Cb_dict
     Checkbutton_Y += 1
-    canvas_left.create_window(250+20*checkbutton_x, 20*Checkbutton_Y, window=tkinter.Checkbutton(canvas_left, text=main_dir, anchor='w', width=60))
+    chb_state = tkinter.IntVar()
+    Cb_dict[main_dir] = []
+    cb = tkinter.Checkbutton(canvas_left, text=main_dir, anchor='w', width=120, variable=chb_state, onvalue=1, offvalue=0, command=lambda: chb_action(Cb_dict[main_dir], chb_state))
+    if args:
+        Cb_dict[args[0]].append(cb)
+    canvas_left.create_window(450+20*checkbutton_x, 21*Checkbutton_Y, window=cb)
     checkbutton_x += 1
     for file in dir_list[0]:
         Checkbutton_Y += 1
-        canvas_left.create_window(250+20*checkbutton_x, 20*Checkbutton_Y, window=tkinter.Checkbutton(canvas_left, text=file, anchor='w', width=60))
+        var = tkinter.StringVar()
+        Var_list.append(var)
+        cb = tkinter.Checkbutton(canvas_left, text=file, anchor='w', width=120, variable=var, onvalue=os.path.join(main_dir, file), offvalue='')
+        Cb_dict[main_dir].append(cb)
+        canvas_left.create_window(450+20*checkbutton_x, 21*Checkbutton_Y, window=cb)
     for re_dir in dir_list[1]:
         ab_dir = os.path.join(main_dir, re_dir)
-        make_button(main_list[ab_dir], ab_dir, main_list, checkbutton_x)
+        make_button(main_list[ab_dir], ab_dir, main_list, checkbutton_x, main_dir)
 
 
 def search_dir(dir):
+    global Checkbutton_Y
+    global Var_list
+    global Cb_dict
+    Checkbutton_Y = 0
+    Var_list = []
+    Cb_dict = {}
     dir_list = {}
+    canvas_left.delete('all')
     for maindir, subdir, file_name_list in os.walk(dir):
-        remove_list = []
-        for file in file_name_list:
-            if not file.endswith('.py'):
-                remove_list.append(file)
-        for remove_name in remove_list:
-            file_name_list.remove(remove_name)
+        file_name_list = [file for file in file_name_list if file.endswith('.py')]
         dir_list[maindir] = [file_name_list, subdir]
     return dir_list
 
@@ -48,6 +74,12 @@ def search_action():
         make_button(dir_list[main_dir], main_dir, dir_list, 0)
     else:
         label_var.set('directory does not exist')
+
+
+def add_action():
+    global File_list
+    global Var_list
+    File_list = [var.get() for var in Var_list if var.get()]
 
 
 frame_left = tkinter.Frame(root, width=450, height=550, bd=3, bg='white', relief=tkinter.GROOVE)
@@ -75,9 +107,10 @@ label.place(relx=0.75, rely=0.015)
 search_button = tkinter.Button(root, text='search', borderwidth=3, width=10, command=search_action)
 search_button.place(relx=0.65, rely=0.01)
 
+add_button = tkinter.Button(root, text='add', borderwidth=3, width=10, command=add_action)
+add_button.place(relx=0.43, rely=0.4)
+
 root.mainloop()
-
-
 
 
 
