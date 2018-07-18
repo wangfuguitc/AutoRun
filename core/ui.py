@@ -80,12 +80,22 @@ def add_action():
     global File_list
     global Var_list
     File_list = [var.get() for var in Var_list if var.get()]
+    x = 0
+    canvas_right.delete('all')
+    for file in File_list:
+        canvas_right.create_text(15, 15+x*15, text=file, anchor=tkinter.W)
+        x += 1
 
 
-frame_left = tkinter.Frame(root, width=450, height=550, bd=3, bg='white', relief=tkinter.GROOVE)
+def run_action():
+    times = run_times.get()
+    times = int(times) if times.isdigit() else 1
+
+
+frame_left = tkinter.Frame(root, width=350, height=550, bd=3, bg='white', relief=tkinter.GROOVE)
 frame_left.place(relx=0.01, rely=0.08)
 
-canvas_left = tkinter.Canvas(frame_left, bg='white', width=450, height=550, scrollregion=(0, 0, 2000, 2000))
+canvas_left = tkinter.Canvas(frame_left, bg='white', width=350, height=550, scrollregion=(0, 0, 2000, 2000))
 
 hbar_left = tkinter.Scrollbar(frame_left, orient=tkinter.HORIZONTAL)
 hbar_left.pack(side=tkinter.BOTTOM, fill=tkinter.X)
@@ -100,6 +110,24 @@ vbar_left.config(command=canvas_left.yview)
 canvas_left.config(xscrollcommand=hbar_left.set, yscrollcommand=vbar_left.set)
 canvas_left.pack()
 
+frame_right = tkinter.Frame(root, width=350, height=550, bd=3, bg='white', relief=tkinter.GROOVE)
+frame_right.place(relx=0.43, rely=0.08)
+
+canvas_right = tkinter.Canvas(frame_right, bg='white', width=350, height=550, scrollregion=(0, 0, 2000, 2000))
+
+hbar_right = tkinter.Scrollbar(frame_right, orient=tkinter.HORIZONTAL)
+hbar_right.pack(side=tkinter.BOTTOM, fill=tkinter.X)
+hbar_right.set(0, 0.5)
+hbar_right.config(command=canvas_right.xview)
+
+vbar_right = tkinter.Scrollbar(frame_right, orient=tkinter.VERTICAL)
+vbar_right.pack(side=tkinter.RIGHT, fill=tkinter.Y)
+vbar_right.set(0, 0.5)
+vbar_right.config(command=canvas_right.yview)
+
+canvas_right.config(xscrollcommand=hbar_right.set, yscrollcommand=vbar_right.set)
+canvas_right.pack()
+
 label_var = tkinter.StringVar()
 label = tkinter.Label(root, textvariable=label_var, width=25, font=('', 14, ''), fg='red')
 label.place(relx=0.75, rely=0.015)
@@ -108,7 +136,22 @@ search_button = tkinter.Button(root, text='search', borderwidth=3, width=10, com
 search_button.place(relx=0.65, rely=0.01)
 
 add_button = tkinter.Button(root, text='add', borderwidth=3, width=10, command=add_action)
-add_button.place(relx=0.43, rely=0.4)
+add_button.place(relx=0.34, rely=0.4)
+
+label_times = tkinter.Label(root, text='times', font=('', 14, ''))
+label_times.place(relx=0.86, rely=0.395)
+run_times = tkinter.Entry(root, width=8)
+run_times.place(relx=0.8, rely=0.4)
+
+var = tkinter.StringVar()
+random = tkinter.Radiobutton(root, text='random', variable=var, value='random', font=('', 14, ''))
+order = tkinter.Radiobutton(root, text='order', variable=var, value='order', font=('', 14, ''))
+var.set('random')
+random.place(relx=0.8, rely=0.45)
+order.place(relx=0.8, rely=0.5)
+
+run_button = tkinter.Button(root, text='run', borderwidth=3, width=10, command=run_action)
+run_button.place(relx=0.8, rely=0.55)
 
 root.mainloop()
 
