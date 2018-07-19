@@ -1,5 +1,8 @@
 import tkinter
 import os
+import random
+import time
+import threading
 from conf import setting
 from core import autorun
 
@@ -90,6 +93,12 @@ def add_action():
 def run_action():
     times = run_times.get()
     times = int(times) if times.isdigit() else 1
+    if var.get() == 'random':
+        random.shuffle(File_list)
+    for i in range(times):
+        report_dir = os.path.join(setting.ReportPath, str(time.strftime("%Y-%m-%d %H_%M_%S", time.localtime())))+'_'+str(time.time())
+        os.makedirs(report_dir)
+        autorun.run_case(File_list, report_dir)
 
 
 frame_left = tkinter.Frame(root, width=350, height=550, bd=3, bg='white', relief=tkinter.GROOVE)
@@ -144,31 +153,13 @@ run_times = tkinter.Entry(root, width=8)
 run_times.place(relx=0.8, rely=0.4)
 
 var = tkinter.StringVar()
-random = tkinter.Radiobutton(root, text='random', variable=var, value='random', font=('', 14, ''))
-order = tkinter.Radiobutton(root, text='order', variable=var, value='order', font=('', 14, ''))
+random_button = tkinter.Radiobutton(root, text='random', variable=var, value='random', font=('', 14, ''))
+order_button = tkinter.Radiobutton(root, text='order', variable=var, value='order', font=('', 14, ''))
 var.set('random')
-random.place(relx=0.8, rely=0.45)
-order.place(relx=0.8, rely=0.5)
+random_button.place(relx=0.8, rely=0.45)
+order_button.place(relx=0.8, rely=0.5)
 
-run_button = tkinter.Button(root, text='run', borderwidth=3, width=10, command=run_action)
+run_button = tkinter.Button(root, text='run', borderwidth=3, width=10, command=lambda: threading.Thread(target=run_action).start())
 run_button.place(relx=0.8, rely=0.55)
 
 root.mainloop()
-
-
-
-# if __name__ == '__main__':
-#     BasePath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-#     ReportPath = os.path.join(BasePath, 'report')
-#     report_dir = os.path.join(ReportPath, str(time.strftime("%Y-%m-%d %H_%M_%S", time.localtime())))
-#     os.makedirs(report_dir)
-#     case_list = []
-#     dir_list = []
-#     for file in os.listdir(os.path.join(BasePath, 'case')):
-#         file_path = os.path.join(BasePath, 'case', file)
-#         if file.split('.')[-1] == 'py':
-#             case_list.append(file_path)
-#         elif os.path.isdir(file_path):
-#             dir_list.append(file_path)
-#     result_list = run_case(case_list, report_dir)
-#     html_report(case_list, result_list, report_dir)

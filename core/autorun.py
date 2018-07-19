@@ -18,6 +18,5 @@ def run_case(case_list, report_dir):
             html_report(case, success, fail, 'fail')
 
 
-
 def html_report(case, success, fail, state):
     pass
