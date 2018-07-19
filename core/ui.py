@@ -3,6 +3,7 @@ import os
 import random
 import time
 import threading
+from tkinter import messagebox
 from conf import setting
 from core import autorun
 
@@ -99,6 +100,7 @@ def run_action():
         report_dir = os.path.join(setting.ReportPath, str(time.strftime("%Y-%m-%d %H_%M_%S", time.localtime())))+'_'+str(time.time())
         os.makedirs(report_dir)
         autorun.run_case(File_list, report_dir)
+    messagebox.showinfo(title='info', message='task finished')
 
 
 frame_left = tkinter.Frame(root, width=350, height=550, bd=3, bg='white', relief=tkinter.GROOVE)
