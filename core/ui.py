@@ -3,6 +3,7 @@ import os
 import random
 import time
 import threading
+import copy
 from tkinter import messagebox
 from conf import setting
 from core import autorun
@@ -96,10 +97,11 @@ def run_action():
     times = int(times) if times.isdigit() else 1
     if var.get() == 'random':
         random.shuffle(File_list)
+    file_list = copy.deepcopy(File_list)
     for i in range(times):
         report_dir = os.path.join(setting.ReportPath, str(time.strftime("%Y-%m-%d %H_%M_%S", time.localtime())))+'_'+str(time.time())
         os.makedirs(report_dir)
-        autorun.run_case(File_list, report_dir)
+        autorun.run_case(file_list, report_dir)
     messagebox.showinfo(title='info', message='task finished')
 
 
