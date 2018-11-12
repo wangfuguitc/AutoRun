@@ -15,9 +15,9 @@ def run_case(case_list, report_dir):
         sub.wait()
         with open(report_html, 'a') as handle:
             if sub.returncode:
-                html_report(case, 'success', handle)
-            else:
                 html_report(case, 'fail', handle)
+            else:
+                html_report(case, 'success', handle)
     with open(report_html, 'a') as handle:
         handle.write('''</table></body></html>''')
 

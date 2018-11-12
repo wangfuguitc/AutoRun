@@ -103,6 +103,7 @@ def run_action():
         os.makedirs(report_dir)
         autorun.run_case(file_list, report_dir)
     messagebox.showinfo(title='info', message='task finished')
+    os.system("start explorer " + report_dir)
 
 
 frame_left = tkinter.Frame(root, width=350, height=550, bd=3, bg='white', relief=tkinter.GROOVE)
